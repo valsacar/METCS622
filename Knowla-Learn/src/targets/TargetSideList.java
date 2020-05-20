@@ -30,6 +30,9 @@ public class TargetSideList extends TargetList {
 	
 	public void setDelim(String newDelim) {this.delim = newDelim;}
 	
+	/*
+	 * Postcondition: Displays the Target text, it's fragment text and hints to the console.
+	 */
 	@Override
 	public void display() {
 		if (this.isDisplayOnly())
@@ -49,6 +52,10 @@ public class TargetSideList extends TargetList {
 		return this.getText();
 	}
 
+	/*
+	 * Postcondition: Displays the Target text, it's fragment text and hints to the console.
+	 * Post2: Displays all subtargets below this one
+	 */
 	@Override
 	public void displayAll() {
 		this.display();
