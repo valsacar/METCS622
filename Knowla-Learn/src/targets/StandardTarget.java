@@ -20,6 +20,9 @@ public class StandardTarget extends Target {
 		super(frag, string);
 	}
 
+	/*
+	 * Postcondition: Displays the Target text and hints to the console.
+	 */
 	@Override
 	public void display() {
 		if (this.isDisplayOnly())

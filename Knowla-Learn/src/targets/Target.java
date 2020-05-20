@@ -70,6 +70,9 @@ public abstract class Target {
 		return this.answer;
 	}
 	
+	/*
+	 * Postcondition: Sets the answer to a new fragment, throws IllegalStateException if the target is displayOnly and has no answer.
+	 */
 	public void setAnswer(Fragment newAnswer) {
 		if (this.isDisplayOnly)
 			throw new IllegalStateException("Target is display only.");

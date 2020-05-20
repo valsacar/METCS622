@@ -39,6 +39,9 @@ public class Hint implements Comparable<Hint>{
 		this.weight = weight;
 	}
 
+	/*
+	 * Postcondition: Displays the hint text to the console.
+	 */
 	public void display() {
 		System.out.println("Hint: " + this.text + " weight: " + this.weight);
 	}

@@ -44,6 +44,9 @@ public class Fragment {
 	
 	public String toString() {return this.text;}
 	
+	/*
+	 * Postcondition: Displays the fragment text and hints to the console.
+	 */
 	public void display() {
 		System.out.println("Fragment: " + this.text);
 		System.out.println("    ========HINTS========");

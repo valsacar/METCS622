@@ -27,6 +27,9 @@ public class TargetBlockList extends TargetList {
 		this.indentSize = size;
 	}
 
+	/*
+	 * Postcondition: Displays the Target text, it's fragment text and hints to the console.
+	 */
 	@Override
 	public void display() {
 		if (this.isDisplayOnly())
@@ -46,6 +49,10 @@ public class TargetBlockList extends TargetList {
 		return this.getText();
 	}
 
+	/*
+	 * Postcondition: Displays the Target text, it's fragment text and hints to the console.
+	 * Post2: Displays all subtargets below this one
+	 */
 	@Override
 	public void displayAll() {
 		this.display();
