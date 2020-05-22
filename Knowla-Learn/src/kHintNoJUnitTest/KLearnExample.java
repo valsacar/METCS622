@@ -1,7 +1,7 @@
 /**
  * 
  */
-package KLeanExamples;
+package kHintNoJUnitTest;
 
 import java.util.ArrayList;
 
@@ -15,11 +15,11 @@ import targets.*;
  */
 public class KLearnExample {
 
-	/**
-	 * @param args
-	 * Postcondition: Test code to display reports of all fragments, targets and related hints
+	
+	/*
+	 * Setup a test session
 	 */
-	public static void main(String[] args) {
+	public void createTestFile(String targetsFileName, String fragmentsFileName) {
 		ArrayList<Fragment> fragments = new ArrayList<Fragment>();
 		ArrayList<Target> targets = new ArrayList<Target>();
 		
@@ -93,6 +93,17 @@ public class KLearnExample {
 		targ = new StandardTarget("}");
 		targ.makeDisplayOnly(); // This is not a drop target
 		targets.add(targ);
+	}
+	
+	
+	/**
+	 * @param args
+	 * Postcondition: Test code to display reports of all fragments, targets and related hints
+	 */
+	public static void main(String[] args) {
+		
+		
+		
 		
 		System.out.println("===========TARGETS===========");
 		
