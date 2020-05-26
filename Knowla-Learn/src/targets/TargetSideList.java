@@ -71,4 +71,26 @@ public class TargetSideList extends TargetList {
 		
 	}
 
+	/*
+	 * Postcondition1: If display only, return the text plus all sub targets separated by delim
+	 * Post2: If solved return Fragment text plus all sub targets separated by delim
+	 * Post3: Otherwise return my text plus all sub targets separated by delim
+	 */
+	@Override
+	public String getDisplay() {
+		String retDisplay = "";
+		
+		if (this.isDisplayOnly()) retDisplay = this.getText(); // Checked first just in case isSolved() got set somehow
+		else if (this.isSolved() && this.getAnswer() != null) retDisplay = this.getAnswer().getText();
+		else retDisplay = this.getText();
+		
+		
+		for (Target target : this.getSubTargets()) {
+			retDisplay += delim + target.getDisplay();
+			
+		}
+					
+		return retDisplay;
+	}
+
 }

@@ -14,6 +14,7 @@ import hints.Hint;
 public class Fragment {
 	private String text;
 	private PriorityQueue<Hint> myHints = new PriorityQueue<Hint>();
+	private boolean isUsed = false;
 	
 	public Fragment(String myText) {
 		this.text = myText;
@@ -27,6 +28,14 @@ public class Fragment {
 		this.text = newText;
 	}
 	
+	public boolean isUsed() {
+		return isUsed;
+	}
+
+	public void setUsed(boolean isUsed) {
+		this.isUsed = isUsed;
+	}
+
 	public PriorityQueue<Hint> getHints() {
 		return this.myHints;
 	}

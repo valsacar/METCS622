@@ -17,6 +17,7 @@ public abstract class Target {
 	private Fragment answer;  // Which fragment should go here
 	private String text; // Default place holder text
 	private boolean isDisplayOnly = false; // This only displays text, it is not a target for a fragment to be placed in
+	private boolean isSolved = false;
 	
 	private PriorityQueue<Hint> myHints = new PriorityQueue<Hint>();
 	
@@ -66,16 +67,24 @@ public abstract class Target {
 	}
 	
 	
+	public boolean isSolved() {
+		return isSolved;
+	}
+
+	public void setSolved(boolean isSolved) {
+		this.isSolved = isSolved;
+	}
+
 	public Fragment getAnswer() {
 		return this.answer;
 	}
 	
 	/*
-	 * Postcondition: Sets the answer to a new fragment, throws IllegalStateException if the target is displayOnly and has no answer.
+	 * Postcondition: Sets the answer to a new fragment, throws TargetIsDisplayOnlyException if the target is displayOnly and has no answer.
 	 */
-	public void setAnswer(Fragment newAnswer) {
+	public void setAnswer(Fragment newAnswer) throws TargetIsDisplayOnlyException {
 		if (this.isDisplayOnly)
-			throw new IllegalStateException("Target is display only.");
+			throw new TargetIsDisplayOnlyException();
 		this.answer = newAnswer;
 	}
 	
@@ -101,6 +110,9 @@ public abstract class Target {
 	public void addHint(Hint newHint) {
 		this.myHints.add(newHint);
 	}
+	
+
+	public abstract String getDisplay();
 
 	public abstract void display();
 	

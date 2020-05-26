@@ -3,6 +3,7 @@
  */
 package targets;
 
+import fragments.Fragment;
 import hints.Hint;
 
 /**
@@ -17,6 +18,10 @@ public class TargetBlockList extends TargetList {
 	
 	public TargetBlockList(String text) {
 		super(text);
+	}
+
+	public TargetBlockList(Fragment frag, String string) {
+		super(frag, string);
 	}
 
 	public int getIndentSize() {
@@ -65,6 +70,33 @@ public class TargetBlockList extends TargetList {
 				target.display();
 		}
 		System.out.println("========/Subs========");
+	}
+
+	/*
+	 * Postcondition1: If display only, return the text plus all sub targets indented
+	 * Post2: If solved return Fragment text plus all sub targets indented
+	 * Post3: Otherwise return the text plus all sub targets indented
+	 */
+	@Override
+	public String getDisplay() {
+		String retDisplay = "";
+		String indent = "";
+		
+		if (this.isDisplayOnly()) retDisplay = this.getText(); // Checked first just in case isSolved() got set somehow
+		else if (this.isSolved() && this.getAnswer() != null) retDisplay = this.getAnswer().getText();
+		else retDisplay = this.getText();
+		
+		// Build the indent string based off our value
+		indent = " ".repeat(indentSize);
+		
+		for (Target target : this.getSubTargets()) {
+			retDisplay += "\n"; // Add a new line
+
+			retDisplay += target.getDisplay().replaceAll("(?m)^", indent); // Get the display, then in multiline mode indent each line
+			
+		}
+					
+		return retDisplay;
 	}
 
 }

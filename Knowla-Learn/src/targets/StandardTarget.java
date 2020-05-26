@@ -42,4 +42,18 @@ public class StandardTarget extends Target {
 		return this.getText();
 	}
 
+	
+	/*
+	 * Postcondition1: If display only, return the text
+	 * Post2: If solved return Fragment text
+	 * Post3: Otherwise return my text
+	 */
+	@Override
+	public String getDisplay() {
+		if (this.isDisplayOnly()) return this.getText(); // Checked first just in case isSolved() got set somehow
+		else if (this.isSolved()) return this.getAnswer().getText();
+					
+		return this.getText();
+	}
+
 }
