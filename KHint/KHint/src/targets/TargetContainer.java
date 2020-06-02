@@ -21,10 +21,16 @@ public class TargetContainer<T extends Target> {
 		return this.target;
 	}
 	
+	/*
+	 * Postcondition1 : Returns the total weight of all hints for this target and it's subtargets.
+	 */
 	public int getHintWeight() {
 		return addHintWeights(this.getTarget());		
 	}
 	
+	/*
+	 * Postcondition1: Returns total hint weight for all hints on provided target and all subtargets.
+	 */
 	private static int addHintWeights(Target t) {
 		int weight = 0;
 		
