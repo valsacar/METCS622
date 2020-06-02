@@ -111,6 +111,22 @@ public abstract class Target {
 		this.myHints.add(newHint);
 	}
 	
+	/*
+	 * Precondition: Provided a fragment as the possible solution for this target
+	 * Postcondition 1: If correct, mark this as solved and return true
+	 * Post2: If incorrect, return false
+	 * 
+	 */
+	public boolean tryAnswer(Fragment testFrag) {
+		if (testFrag == this.answer) {
+			this.setSolved(true); // Solve it
+			return true;
+		}
+		
+		return false;
+		
+	}
+	
 
 	public abstract String getDisplay();
 

@@ -41,6 +41,19 @@ public abstract class TargetList extends Target {
 		return this.subTargets;
 	}
 	
+	public ArrayList<Target> getAllSubs() {
+		ArrayList<Target> subs = new ArrayList<Target>();
+		
+		for (Target t : getSubTargets()) {
+			subs.add(t);
+			if (t instanceof TargetList) {
+				subs.addAll(((TargetList) t).getAllSubs());
+			}
+		}
+
+		return subs;
+	}
+	
 	public abstract String toString();
 	
 	public abstract void displayAll();
