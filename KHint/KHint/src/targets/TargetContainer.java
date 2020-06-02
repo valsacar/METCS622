@@ -31,6 +31,7 @@ public class TargetContainer<T extends Target> {
 	/*
 	 * Postcondition1: Returns total hint weight for all hints on provided target and all subtargets.
 	 */
+
 	private static int addHintWeights(Target t) {
 		int weight = 0;
 		
