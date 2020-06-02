@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.StringTokenizer;
@@ -16,6 +17,7 @@ import java.util.StringTokenizer;
 import fragments.Fragment;
 import hints.Hint;
 import targets.Target;
+import targets.TargetContainer;
 import targets.TargetList;
 
 /**
@@ -24,13 +26,13 @@ import targets.TargetList;
  */
 public class KHintSession {
 	
-	private static final String SESSION_LOG = "session.txt";
+	private static final String SESSION_LOG = "session.log";
 	private static final String INVALID_INPUT = "Invalid input, there must be a letter and a number.";
 	private static final String PROP_TARGET = "target";
 	private static final String PROP_FRAG = "fragment";
 	
 	private ArrayList<Fragment> fragments = new ArrayList<Fragment>();
-	private ArrayList<Target>targets = new ArrayList<Target>();
+	private ArrayList<TargetContainer<Target>>targets = new ArrayList<TargetContainer<Target>>();
 	private ArrayList<Hint> usedHints = new ArrayList<Hint>();
 	
 	public KHintSession() {}
@@ -48,23 +50,45 @@ public class KHintSession {
 	}
 
 	public ArrayList<Target> getTargets() {
-		return targets;
+		ArrayList<Target> targs = new ArrayList<Target>();
+		
+		for (TargetContainer<?> t : targets) {
+			targs.add(t.getTarget());
+		}
+		
+		return targs;
+	}
+	
+	/*
+	 * Postcondition: Builds a list of all top level targets and all their subs.
+	 */
+	public ArrayList<Target> getAllTargets() { 
+		ArrayList<Target> targs = new ArrayList<Target>();
+		
+		for (TargetContainer<?> t : targets) {
+			targs.add(t.getTarget());
+			
+			if (t.getTarget() instanceof TargetList) // If it has subs, all those to the allTargets as well
+				targs.addAll(((TargetList) t.getTarget()).getAllSubs());
+		}
+		
+		return targs;
 	}
 	
 	/*
 	 * Protected because we don't want bypassing the addTarget method, but there may be a use for it within the package
-	 */
+	 
 	protected void setTargets(ArrayList<Target> targets) {
 		this.targets = targets;
 	}
-	
+	*/
 	
 	
 	/*
 	 * Postcondition1: targets list is updated
 	 */
 	public void addTarget(Target targ) {
-		targets.add(targ);
+		targets.add(new TargetContainer<Target>(targ));		
 	}
 	
 	/*
@@ -131,9 +155,14 @@ public class KHintSession {
 			
 			// We won't assume the user always follows the target fragment order, we'll accept either
 			char c = token.charAt(0);
-			if (c > '0' && c < '9') { // It's a number
+			if (c > '0' && c <= '9') { // It's a number
 				if (answerReturn.getProperty(PROP_FRAG) != null) { // They already gave us a fragmnent
 					displayAndLog(INVALID_INPUT);
+					return getUserResponse();
+				}
+				
+				if (Integer.valueOf(token)-1 > fragments.size()) {
+					displayAndLog("There is no fragment " + token + ".");
 					return getUserResponse();
 				}
 				
@@ -144,7 +173,7 @@ public class KHintSession {
 					return getUserResponse();
 				}
 				
-				answerReturn.setProperty(PROP_TARGET, token);
+				answerReturn.setProperty(PROP_TARGET, token.toUpperCase());
 			}
 		}
 		
@@ -155,8 +184,8 @@ public class KHintSession {
 	private void displayTargets() {
 		String displayString = "";
 		
-		for (Target targ : targets) {
-			displayString += targ.getDisplay() + "\n";
+		for (TargetContainer<?> targ : targets) {
+			displayString += targ.getTarget().getDisplay() + "\n";
 		}
 		
 		displayAndLog(displayString);
@@ -175,6 +204,54 @@ public class KHintSession {
 	}
 	
 	/*
+	 * Precondition1: Properties containing the user choice
+	 * Postcondition1: Returns true if answer was correct
+	 * Post2: Returns false if answer was wrong 
+	 */
+	private boolean resolveResponse(Properties response) {
+		Fragment frag = fragments.get(Integer.valueOf(response.getProperty(PROP_FRAG)));
+		
+		if (frag == null) {
+			displayAndLog("Invalid fragment chosen.");
+			return false;
+		}
+		
+		Target targ = getAllTargets().stream().filter(t -> t.getText().equals(response.getProperty(PROP_TARGET))).findFirst().orElse(null);
+		
+		if (targ == null) {
+			displayAndLog("Invalid Target chosen.");
+			return false;
+		}
+		
+		boolean retVal = targ.tryAnswer(frag);
+		
+		if (retVal) {
+			displayAndLog("Very good, that is correct!");
+		} else {
+			PriorityQueue<Hint> theHints = new PriorityQueue<Hint>();
+			
+			theHints.addAll(frag.getHints());
+			theHints.addAll(targ.getHints());
+			
+			Hint h = theHints.poll();
+			
+			displayAndLog("Sorry, that is incorrect.");
+			
+			if (h != null) { // If we have a hint available
+				displayAndLog("Here is a hint: " + h.getText());
+				
+				// Use up the hint, not sure which queue it came from so we'll remove from both
+				frag.getHints().remove(h);
+				targ.getHints().remove(h);
+				usedHints.add(h);
+
+			}
+		}
+		
+		return retVal;
+	}
+	
+	/*
 	 * Begins the KHint session
 	 */
 	public void startSession() {
@@ -183,7 +260,14 @@ public class KHintSession {
 		displayTargets();
 		displayAndLog("\n\n");
 		displayFragments();
-		getUserResponse();
+		Properties response = getUserResponse();
+		
+		resolveResponse(response);
+		
+		int hintWeight = 0;
+		for (TargetContainer<Target> t : targets) { hintWeight += t.getHintWeight();}
+		
+		displayAndLog("\n\nTotal hint weight available: " + hintWeight);
 		
 		String endTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now());
 		displayAndLog("Session ended: " + endTime + "\n\n\n");
