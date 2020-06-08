@@ -3,12 +3,17 @@
  */
 package hints;
 
+import java.io.Serializable;
+
 /**
  * @author Joseph Monk
  *
  */
-public class Hint implements Comparable<Hint>{
+public class Hint implements Comparable<Hint>, Serializable{
 
+
+	private static final long serialVersionUID = 2449416940961302252L;
+	
 	private String text;
 	private int weight = 5; // Used for both scoring and order that the hints should appear in, default is 5
 	

@@ -251,6 +251,8 @@ public class KHintSession {
 		return retVal;
 	}
 	
+	
+	
 	/*
 	 * Begins the KHint session
 	 */

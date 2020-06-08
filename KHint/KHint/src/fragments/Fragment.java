@@ -3,6 +3,7 @@
  */
 package fragments;
 
+import java.io.Serializable;
 import java.util.PriorityQueue;
 
 import hints.Hint;
@@ -11,7 +12,12 @@ import hints.Hint;
  * @author Joseph Monk
  *
  */
-public class Fragment {
+public class Fragment implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 912935984028583197L;
+	
 	private String text;
 	private PriorityQueue<Hint> myHints = new PriorityQueue<Hint>();
 	private boolean isUsed = false;

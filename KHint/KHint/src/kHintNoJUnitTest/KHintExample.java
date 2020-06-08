@@ -4,6 +4,14 @@
 package kHintNoJUnitTest;
 
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+
 import fragments.Fragment;
 import hints.Hint;
 import session.KHintSession;
@@ -99,6 +107,48 @@ public class KHintExample {
 
 	}
 	
+	/*
+	 * Not really needed for the project, implemented as required by homework.
+	 * Precondition1: the session has been loaded with fragments we can save.
+	 * Postcondition1: fragments.dat file is written
+	 */
+	public void saveFragments() {
+		
+		 try (ObjectOutputStream outfile = new ObjectOutputStream(new FileOutputStream("fragments.dat"));)  {
+             outfile.writeObject(this.mySession.getFragments());
+		 } catch (FileNotFoundException e) {
+			 System.out.println("File not found.");
+			 e.printStackTrace();
+		 } catch (IOException e) {
+			 System.out.println("IO Exception");
+			 e.printStackTrace();
+		 }
+	}
+	
+	/*
+	 * Not really needed for the project, implemented as required by homework.
+	 * Precondition1: fragments.dat file exists with data
+	 * Postcondition1: fragments.dat is read into an ArrayList<Fragment>
+	 */
+	public void readFragments() {
+		try (ObjectInputStream infile = new ObjectInputStream(new FileInputStream("fragments.dat"));)  {
+            ArrayList<Fragment> readFrags =  (ArrayList<Fragment>) (infile.readObject());
+            for (Fragment f : readFrags) {
+            	System.out.println(f);
+            	System.out.println(f.getHints());
+            	System.out.println();
+            }
+		} catch (FileNotFoundException e) {
+			 System.out.println("File not found.");
+			 e.printStackTrace();
+		 } catch (IOException e) {
+			 System.out.println("IO Exception");
+			 e.printStackTrace();
+		 } catch (ClassNotFoundException e) {
+			System.out.println("Class not found");
+			e.printStackTrace();
+		}
+	}
 	
 	/**
 	 * @param args
@@ -109,6 +159,9 @@ public class KHintExample {
 		KHintExample myExample = new KHintExample();
 		myExample.createTestSession();
 		myExample.mySession.startSession();
+		
+		myExample.saveFragments();
+		myExample.readFragments();
 		
 
 	}
