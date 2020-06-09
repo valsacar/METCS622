@@ -12,4 +12,4 @@ User is prompted to enter a fragment and the target location to put it, input is
 
 If the choice is a wrong match, the user is given a hint (if available) for the correct placement.  Otherwise they are told that is the correct choice.  Program ends at this point.
 
-The GUI porition of the original design is partially implemented, it can be wrong from session.KHintApplication.
+The GUI porition of the original design is partially implemented, it can be run from session.KHintApplication.
