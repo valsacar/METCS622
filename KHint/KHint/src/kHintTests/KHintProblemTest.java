@@ -18,8 +18,8 @@ class KHintProblemTest {
 			origList.add(new Fragment("Frag " + i));
 		}
 		
-		//We'll run 1000 tests since this uses random in it
-		for (int t = 0; t < 1000; t++) {
+		//We'll run 10000 tests since this uses random in it
+		for (int t = 0; t < 10000; t++) {
 			ArrayList<Fragment> randomList = new ArrayList<>(origList);
 			KHintProblem.shuffleFrags(randomList); // Shuffle it
 

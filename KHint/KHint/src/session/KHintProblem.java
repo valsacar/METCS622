@@ -53,37 +53,29 @@ public class KHintProblem {
 		Stack<Fragment> frags = new Stack<Fragment>();
         targets.forEach(targ -> frags.add(targ.getAnswer()));
         shuffleFrags(frags);
+        Collections.reverse(frags);  // Reverse it so when we pop them back in it's in the correct order
         targets.forEach(targ -> targ.setCurrentFrag(frags.pop()));
 	}
 	
 	/*
+	 * Implementation of Sattolo's algorithm
 	 * Postcondition1: List is randomized such that no element remains at the same index
 	 * This was private, made public to easily do junit testing
 	 */
-	
+
 	public static void shuffleFrags(List<Fragment> list) {
 		Random r = new Random();
-		int size = list.size();
-		List<Fragment> goldList = new ArrayList<>(list); // Gold standard, so we know the original order
-
-		int loop = 0;
-		for (int i = size-1; i >= 0; i--) {
-			int pos = r.nextInt(i + 1); // Where we will swap
-			System.out.println("Loop " + (++loop));
-			if (pos == goldList.indexOf(list.get(i)) || // Make sure I'm not moving to where I used to be
-					i == goldList.indexOf(list.get(pos))) { // Make sure I'm not swapping him where he used to be
-				
-				i++; // reset this run
-				continue;
-			}
+		int i = list.size();
+		
+		while (i > 1) {
+			i = i - 1;
+			int j = r.nextInt(i);
 			
-			// Swap the fragments at i and pos
 			Fragment swap = list.get(i);
-			list.set(i, list.get(pos));
-			list.set(pos, swap);
-			
-		}
-		Collections.reverse(list);
+			list.set(i, list.get(j));
+			list.set(j, swap);
+		}		
 	}
+	
 	
 }
