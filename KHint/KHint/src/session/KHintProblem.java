@@ -60,7 +60,7 @@ public class KHintProblem {
 	/*
 	 * Implementation of Sattolo's algorithm
 	 * Postcondition1: List is randomized such that no element remains at the same index
-	 * This was private, made public to easily do junit testing
+	 * This was private, made public to easily do junit testing 
 	 */
 
 	public static void shuffleFrags(List<Fragment> list) {
