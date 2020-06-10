@@ -32,9 +32,12 @@ public class KHintController implements Initializable {
     private TextArea descBox = new TextArea();
 
 
-	private ObservableList<DragTarget> targets;
+	private ObservableList<DragTarget> targets; // Targets that will be displayed
 	private KHintProblem myProblem;
 
+	/*
+	 * Precondition1: A problem containing targets with randomized current fragment
+	 */
 	public KHintController(KHintProblem problem) {
 		this.targets = FXCollections.observableArrayList(problem.getTargets());
 		this.myProblem = problem;
@@ -42,16 +45,15 @@ public class KHintController implements Initializable {
 	
 	@Override
 	public void initialize(URL url, ResourceBundle resourceBundle) {
-		orderList.setItems(targets);
+		orderList.setItems(targets); // Put the targets in the view
 		orderList.setCellFactory(param -> new TargetCell());
 		
 		this.descBox.setText(myProblem.getDescription());
-		//orderList.setPrefWidth(180);
-
-        //VBox layout = new VBox(orderList);
-        //layout.setPadding(new Insets(10));
 	}
 	
+	/*
+	 * Inner class to setup the target cells and enable them to be re-ordered with drag and drop
+	 */
 	private class TargetCell extends ListCell<DragTarget> {
 
         public TargetCell() {

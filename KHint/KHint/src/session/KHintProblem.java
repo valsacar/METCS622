@@ -49,6 +49,11 @@ public class KHintProblem {
 		this.description = description;
 	}	
 	
+	/*
+	 * Precondition1: this.targets is populated with the correct fragment answers
+	 * Postcondition1: Answers (fragments) are extracted from this.targets and shuffled into random order
+	 * Postcondition2: Shuffuled fragments are added back to targets as currentFragment
+	 */
 	private void shuffleFragments() {
 		Stack<Fragment> frags = new Stack<Fragment>();
         targets.forEach(targ -> frags.add(targ.getAnswer()));
