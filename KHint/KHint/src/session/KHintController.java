@@ -17,10 +17,18 @@ import targets.DragTarget;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import fragments.Fragment;
+import hints.Hint;
+
+/**
+ * @author Joseph Monk
+ *
+ * Controls the main application, loads the problem into DragTargets which are displayed and support drag-and-drop to re-order.
+ */
 
 public class KHintController implements Initializable {
 
@@ -121,6 +129,9 @@ public class KHintController implements Initializable {
                     Fragment tempFrag = tempTarg.getCurrentFrag();
                     tempTarg.setCurrentFrag(getItem().getCurrentFrag());
                     getItem().setCurrentFrag(tempFrag);
+                    
+                    KHintApplication.LOGGER.log(tempFrag + " moved to " + getItem().getText());
+                    checkAnswer(getItem());
 
                     // For some reason using getListView().refresh() was highlighting random rows
                     // Doing a copy and set seems to resolve this issue
@@ -138,6 +149,36 @@ public class KHintController implements Initializable {
             setOnDragDone(DragEvent::consume);
         }
 
+        private void checkAnswer(DragTarget target) {
+        	if (target.getAnswer() == target.getCurrentFrag()) {
+        		KHintApplication.LOGGER.log("Correct answer for " + target.getText() + " selected.");
+        	} else {
+        		KHintApplication.LOGGER.log("Incorrect answer for " + target.getText() + " selected, providing hint.");
+        		ArrayList<Hint> theHints = new ArrayList<Hint>();  
+    			
+    			theHints.addAll(target.getCurrentFrag().getHints()); // Get hints for the current, wrong, fragment
+    			theHints.addAll(target.getHints()); // Get hints for the target
+    			
+    			if (theHints.size() != 0 ) { // Make sure we have hints
+    			
+	    			Collections.sort(theHints); // Sorts by hint weight
+	    			
+	    			Hint low = theHints.get(0);
+	    			
+	    			KHintApplication.LOGGER.log("Selected low (" + low.getWeight() + ") hint: " + low);
+	    			
+	    			Hint mid = theHints.get(theHints.size()/2);  // Get one around the middle
+	    			
+	    			KHintApplication.LOGGER.log("Selected mid (" + mid.getWeight() + ") hint: " + mid);
+	    			
+	    			Hint high = theHints.get(theHints.size() - 1);  // The last hint should be the highest
+	    			
+	    			KHintApplication.LOGGER.log("Selected high (" + high.getWeight() + ") hint: " + high);
+    			} else {
+    				KHintApplication.LOGGER.log("No hints left to give");
+    			}
+        	}
+        }
         @Override
         protected void updateItem(DragTarget item, boolean empty) {
             super.updateItem(item, empty);

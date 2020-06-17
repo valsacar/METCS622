@@ -11,6 +11,7 @@ import java.util.Random;
 import java.util.Stack;
 
 import fragments.Fragment;
+import hints.Hint;
 import targets.DragTarget;
 
 /**
@@ -22,12 +23,12 @@ public class KHintProblem {
 	
 	// Some temp data for testing
 	private static final ArrayList<DragTarget> tempTargets = new ArrayList<DragTarget>(Arrays.asList(
-            new DragTarget(new Fragment("test frag")),
-            new DragTarget(new Fragment("test frag2")),
-            new DragTarget(new Fragment("test frag3")),
-            new DragTarget(new Fragment("test frag4")),
-            new DragTarget(new Fragment("test frag5")),
-            new DragTarget(new Fragment("test frag6"))
+            new DragTarget(new Fragment("test frag"), "Position 1"),
+            new DragTarget(new Fragment("test frag2"), "Position 2"),
+            new DragTarget(new Fragment("test frag3"), "Position 3"),
+            new DragTarget(new Fragment("test frag4"), "Position 4"),
+            new DragTarget(new Fragment("test frag5"), "Position 5"),
+            new DragTarget(new Fragment("test frag6"), "Position 6")
     ));
 	
 	private ArrayList<DragTarget> targets;
@@ -35,7 +36,16 @@ public class KHintProblem {
 	
 	public KHintProblem() {
 		this.targets = tempTargets;
+		targets.get(0).addHint(new Hint("A hint", 10));
+		targets.get(0).addHint(new Hint("A hint2", 20));
+		targets.get(0).addHint(new Hint("A hint3", 30));
+		targets.get(0).getAnswer().addHint(new Hint("A frag hint", 10));
+		targets.get(0).getAnswer().addHint(new Hint("A frag hint2", 15));
+		targets.get(0).getAnswer().addHint(new Hint("A frag hint3", 40));
 		this.shuffleFragments();
+		targets.get(0).getCurrentFrag().addHint(new Hint("A frag2 hint", 10));
+		targets.get(0).getCurrentFrag().addHint(new Hint("A frag2 hint2", 25));
+		targets.get(0).getCurrentFrag().addHint(new Hint("A frag2 hint3", 45));
 		this.description = "This is a test of the KHint Application";
 	}
 	

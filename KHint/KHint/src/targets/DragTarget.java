@@ -8,12 +8,17 @@ import fragments.Fragment;
 /**
  * @author Joseph Monk
  *
+ * Targets that hold both an answer and a current fragment.  To be used with KHintController.
  */
 public class DragTarget extends Target {
 	private Fragment currentFrag;
 	
 	public DragTarget(Fragment answer) {
 		super(answer);
+	}
+	
+	public DragTarget(Fragment answer, String text) {
+		super(answer, text);
 	}
 
 	public Fragment getCurrentFrag() {
