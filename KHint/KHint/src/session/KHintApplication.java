@@ -18,7 +18,7 @@ public class KHintApplication extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-    	KHintProblem problem = new KHintProblem();
+    	KHintProblem problem = new KHintProblem(1);
 
         FXMLLoader loader = new FXMLLoader(getClass().getResource("KHintApplication.fxml"));
         
@@ -27,9 +27,9 @@ public class KHintApplication extends Application {
         // Set it in the FXMLLoader
         loader.setController(controller);
         GridPane flowPane = loader.load();
-        Scene scene = new Scene(flowPane, 800, 500);
+        Scene scene = new Scene(flowPane, 1200, 500);
         
-        stage.setTitle("Knowla-Hint");
+        stage.setTitle("Knowla-Hint -- " + problem.getTitle());
 
         stage.setScene(scene);
         stage.show();

@@ -111,6 +111,10 @@ public abstract class Target {
 		this.myHints.add(newHint);
 	}
 	
+	public void removeHint(Hint h) {
+		this.myHints.remove(h);
+	}
+	
 	/*
 	 * Precondition: Provided a fragment as the possible solution for this target
 	 * Postcondition 1: If correct, mark this as solved and return true

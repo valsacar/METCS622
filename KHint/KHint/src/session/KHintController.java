@@ -5,7 +5,11 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
@@ -13,12 +17,14 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Region;
 import targets.DragTarget;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import fragments.Fragment;
@@ -38,6 +44,9 @@ public class KHintController implements Initializable {
 	
 	@FXML
     private TextArea descBox = new TextArea();
+	
+	@FXML
+    private Label score;
 
 
 	private ObservableList<DragTarget> targets; // Targets that will be displayed
@@ -57,6 +66,8 @@ public class KHintController implements Initializable {
 		orderList.setCellFactory(param -> new TargetCell());
 		
 		this.descBox.setText(myProblem.getDescription());
+		this.descBox.setWrapText(true);
+		score.setText("100%");
 	}
 	
 	/*
@@ -66,6 +77,7 @@ public class KHintController implements Initializable {
 
         public TargetCell() {
             ListCell<DragTarget> thisCell = this;
+            this.setWrapText(true);
 
             setContentDisplay(ContentDisplay.TEXT_ONLY);
             setAlignment(Pos.CENTER_LEFT);
@@ -148,7 +160,12 @@ public class KHintController implements Initializable {
 
             setOnDragDone(DragEvent::consume);
         }
-
+        
+        /*
+         * Checks if the answer the user placed here is the correct one
+         * Postcondition1: If the answer is correct, log and move on.
+         * Postcondition2: If the answer is incorrect, gather appropriate hints and present the user choices
+         */
         private void checkAnswer(DragTarget target) {
         	if (target.getAnswer() == target.getCurrentFrag()) {
         		KHintApplication.LOGGER.log("Correct answer for " + target.getText() + " selected.");
@@ -174,18 +191,88 @@ public class KHintController implements Initializable {
 	    			Hint high = theHints.get(theHints.size() - 1);  // The last hint should be the highest
 	    			
 	    			KHintApplication.LOGGER.log("Selected high (" + high.getWeight() + ") hint: " + high);
+	    			
+	    			Hint used = giveHint(low, mid, high);
+	    			
+	    			// Don't know which side this came from, so we'll just try and remove it from both
+	    			if (used != null) {
+	    				target.removeHint(used);
+	    				target.getCurrentFrag().removeHint(used);
+	    				
+	    				// Calculate our new percentage
+	    				int s = (int) ((myProblem.useHint(used) * 100.0) / myProblem.getTotalHintScore());
+	    				
+	    				score.setText(s + "%");
+
+	    			}
     			} else {
     				KHintApplication.LOGGER.log("No hints left to give");
+    				processHint(null);
     			}
         	}
         }
+        
+        /*
+         * Presents a choice to the user of 3 levels of hints.
+         * Postcondition: returns the hint that the user selected from the dialog box.
+         */
+        private Hint giveHint(Hint low, Hint mid, Hint high) {
+        	Hint chosen = null;
+        	ButtonType l = new ButtonType("Minor");
+        	ButtonType m = new ButtonType("Medium");
+        	ButtonType h = new ButtonType("Large");
+
+        	Alert a = new Alert(AlertType.NONE, "", l, m, h);
+        	
+        	a.setTitle("Hint Selection");
+        	
+        	a.setHeaderText(null);
+        	a.setResizable(false);
+        	a.setContentText("Select a hint type.");
+        	a.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        	Optional<ButtonType> result = a.showAndWait();
+        	if (result.get() == l){
+        		KHintApplication.LOGGER.log("Used selected low: " + low.getText());
+        	    chosen = low;
+        	} else if (result.get() == m) {
+        		KHintApplication.LOGGER.log("Used selected mediem: " + mid.getText());
+        		chosen = low;
+        	} else if (result.get() == h) {
+        		KHintApplication.LOGGER.log("Used selected high: " + high.getText());
+        		chosen = low;
+        	}
+        	
+        	processHint(chosen);
+        	
+        	return chosen;
+        }
+        
+        /*
+         * Presents the hint information to the user
+         * Postcondition: Information box shows the hint for the user
+         */
+        private void processHint(Hint h) {
+        	Alert alert = new Alert(AlertType.INFORMATION);
+    		alert.setTitle("Hint");
+    		alert.setHeaderText(null);
+    		
+        	if (h != null)        		
+        		alert.setContentText(h.getText());
+        	else
+        		alert.setContentText("Sorry, no more hints left for this fragment.");
+        	alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        	alert.showAndWait();
+        }
+        
         @Override
         protected void updateItem(DragTarget item, boolean empty) {
             super.updateItem(item, empty);
+            this.setWrapText(true);
+            this.setPrefWidth(50.0);
 
             if (empty || item == null) {
             	setText(null);
-            } else {
+            } else {            	
                 setText(item.toString());
                 if (item.isSolved()) {
                 	setStyle("-fx-control-inner-background: green;");

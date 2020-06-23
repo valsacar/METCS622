@@ -57,6 +57,10 @@ public class Fragment implements Serializable {
 		this.myHints.add(newHint);
 	}
 	
+	public void removeHint(Hint h) {
+		this.myHints.remove(h);
+	}
+	
 	public String toString() {return this.text;}
 	
 	/*

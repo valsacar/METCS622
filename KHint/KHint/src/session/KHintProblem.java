@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Stack;
 
+import database.KHintDB;
 import fragments.Fragment;
 import hints.Hint;
 import targets.DragTarget;
@@ -20,6 +21,8 @@ import targets.DragTarget;
  *This class is currently a skeleton, implemented such that a single session can have multiple problems in the future
  */
 public class KHintProblem {
+	private int totalHintScore = 0;
+	private int currentHintScore = 0;
 	
 	// Some temp data for testing
 	private static final ArrayList<DragTarget> tempTargets = new ArrayList<DragTarget>(Arrays.asList(
@@ -32,6 +35,7 @@ public class KHintProblem {
     ));
 	
 	private ArrayList<DragTarget> targets;
+	private String title;
 	private String description;
 	
 	public KHintProblem() {
@@ -47,7 +51,20 @@ public class KHintProblem {
 		targets.get(0).getCurrentFrag().addHint(new Hint("A frag2 hint2", 25));
 		targets.get(0).getCurrentFrag().addHint(new Hint("A frag2 hint3", 45));
 		this.description = "This is a test of the KHint Application";
+		this.setTotalHint();
 	}
+	
+	public KHintProblem(int problemNumber) {
+		KHintDB db = new KHintDB("test.db");
+		this.targets = db.loadProblem(problemNumber);
+		this.shuffleFragments();
+		
+		this.title = db.getTitle(problemNumber);		
+		this.description = db.getDesc(problemNumber);
+		db.close();
+		this.setTotalHint();
+	}
+	
 	
 	public ArrayList<DragTarget> getTargets() {return this.targets;}
 	
@@ -59,6 +76,47 @@ public class KHintProblem {
 		this.description = description;
 	}	
 	
+	public String getTitle() {
+		return title;
+	}
+	
+	public int getTotalHintScore() {
+		return totalHintScore;
+	}
+
+	public int getCurrentHintScore() {
+		return currentHintScore;
+	}
+	
+	private void setTotalHint() {
+		int total = 0;
+		
+		for (DragTarget t : this.targets) {
+			// Add the hint weight for all the hints in this target
+			for (Hint h : t.getHints()) {
+				total += h.getWeight();
+			}
+			
+			// And do the same for the fragment answer
+			for (Hint h : t.getAnswer().getHints()) {
+				total += h.getWeight();
+			}			
+		}
+		
+		this.currentHintScore = total;
+		this.totalHintScore = total;
+	}
+	
+	/*
+	 * Postcondition: Lowers the current hint score by the weight of the used hint
+	 * Returns the new current hint score.
+	 */
+	public int useHint(Hint h) {
+		this.currentHintScore -= h.getWeight();
+		
+		return this.currentHintScore;
+	}
+
 	/*
 	 * Precondition1: this.targets is populated with the correct fragment answers
 	 * Postcondition1: Answers (fragments) are extracted from this.targets and shuffled into random order
